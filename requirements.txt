@@ -1,10 +1,7 @@
---extra-index-url https://download.pytorch.org/whl/cpu
 Flask==3.1.3
 Werkzeug==3.1.6
 numpy
 Pillow
 matplotlib
-torch
-torchvision
-timm
+onnxruntime
 gunicorn

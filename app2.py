@@ -53,21 +53,12 @@ init_db()
 # MODEL
 ############################################
 
-import torch
-import timm
-from torchvision import transforms
-import torch.nn.functional as F
+import numpy as np
+from PIL import Image
+import onnxruntime as ort
 
-device = torch.device("cpu")
-
-model = timm.create_model(
-    'vit_base_patch16_224',
-    pretrained=False,
-    num_classes=3
-)
-
-model.load_state_dict(torch.load('cataract_vit_model.pth', map_location=device))
-model.eval()
+# Load the ONNX model
+session = ort.InferenceSession('cataract_vit_model.onnx')
 
 classes = ['Immature', 'Mature', 'Normal']
 
@@ -75,11 +66,22 @@ classes = ['Immature', 'Mature', 'Normal']
 # IMAGE PREPROCESSING
 ############################################
 
-transform = transforms.Compose([
-    transforms.Resize((224,224)),
-    transforms.ToTensor(),
-    transforms.Normalize([0.5,0.5,0.5],[0.5,0.5,0.5])
-])
+def preprocess_image(image):
+    # Resize to 224x224
+    image = image.resize((224, 224), Image.BILINEAR)
+    # Convert to float32 NumPy array
+    img_array = np.array(image).astype(np.float32) / 255.0
+    # ToTensor: shape from (H, W, C) to (C, H, W)
+    img_array = np.transpose(img_array, (2, 0, 1))
+    # Normalize: mean [0.5,0.5,0.5], std [0.5,0.5,0.5]
+    img_array = (img_array - 0.5) / 0.5
+    # Unsqueeze: shape to (1, C, H, W)
+    img_array = np.expand_dims(img_array, axis=0)
+    return img_array
+
+def softmax(x):
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum(axis=1, keepdims=True)
 
 ############################################
 # PREDICTION FUNCTION
@@ -87,15 +89,23 @@ transform = transforms.Compose([
 
 def predict(image):
     image = image.convert("RGB")
-    image = transform(image).unsqueeze(0)
+    try:
+        input_data = preprocess_image(image)
+    except Exception as e:
+        return "Invalid image format"
 
-    with torch.no_grad():
-        outputs = model(image)
-        probs = F.softmax(outputs, dim=1)
-        confidence, predicted = torch.max(probs, 1)
+    # Run ONNX inference
+    input_name = session.get_inputs()[0].name
+    outputs = session.run(None, {input_name: input_data})
+    
+    # Apply softmax to outputs
+    probs = softmax(outputs[0])
+    
+    # Get highest confidence class
+    predicted_idx = np.argmax(probs, axis=1)[0]
+    confidence = probs[0][predicted_idx]
 
-    confidence = confidence.item()
-    predicted_class = classes[predicted.item()]
+    predicted_class = classes[predicted_idx]
 
     if confidence < 0.60:
         return "Invalid image (Not an eye image)"

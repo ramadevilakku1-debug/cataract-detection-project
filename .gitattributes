@@ -1,1 +1,2 @@
 cataract_vit_model.pth filter=lfs diff=lfs merge=lfs -text
+cataract_vit_model.onnx filter=lfs diff=lfs merge=lfs -text
