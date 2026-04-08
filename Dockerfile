@@ -14,4 +14,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 7860
 
 # Command to run the application
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:7860", "app:app"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:7860", "app2:app"]
