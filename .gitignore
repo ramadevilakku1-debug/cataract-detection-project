@@ -12,7 +12,7 @@ env/
 
 # Model files (VERY IMPORTANT)
 *.h5
-*.pth
+# *.pth
 *.pkl
 *.pt
 
