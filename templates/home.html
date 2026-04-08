@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cataract Detection Project</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f0f8ff url('https://images.unsplash.com/photo-1615240135436-2b8f8b8e490e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80') no-repeat center/cover;
+            color: #333;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, rgba(52, 152, 219, 0.2), transparent 50%),
+                        radial-gradient(circle at 70% 70%, rgba(46, 204, 113, 0.2), transparent 50%);
+            animation: eyePulse 8s infinite ease-in-out;
+            z-index: -1;
+        }
+
+        @keyframes eyePulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+
+        /* Enhanced Navbar */
+        .navbar {
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            padding: 1.5rem 3rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            transition: all 0.4s ease;
+        }
+
+        .navbar.scrolled {
+            background: linear-gradient(135deg, #2980b9, #27ae60);
+            transform: scale(1.01);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-btn {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            top: 0;
+            left: -100%;
+            transition: all 0.4s ease;
+        }
+
+        .nav-btn:hover::after {
+            left: 0;
+        }
+
+        .nav-btn:hover {
+            background-color: rgba(52, 152, 219, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .active {
+            background-color: #2ecc71;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(46, 204, 113, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+        }
+
+        /* Main Content */
+        .container {
+            margin: 120px auto 20px;
+            padding: 20px;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            text-align: center;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 2.8rem;
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: textGlow 3s infinite alternate;
+        }
+
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 5px #3498db; }
+            100% { text-shadow: 0 0 15px #2ecc71; }
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin: 40px 0 20px;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 3px;
+            background: #3498db;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: expand 2s infinite;
+        }
+
+        @keyframes expand {
+            0% { width: 50px; }
+            50% { width: 100px; }
+            100% { width: 50px; }
+        }
+
+        p {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            color: #444;
+            margin-top: 10px;
+        }
+
+        /* Particles and Flowing Text */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .text-flow {
+            position: absolute;
+            font-size: 1.2rem;
+            color: #3498db;
+            opacity: 0.6;
+            pointer-events: none;
+            z-index: 0;
+            animation: flowText 8s linear infinite;
+        }
+
+        @keyframes flowText {
+            0% { transform: translateX(-100vw); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateX(100vw); opacity: 0; }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="particles-js"></div>
+    <div id="textFlowContainer"></div>
+
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-btn"><i class="fas fa-home"></i> Home</a>
+            <a href="/login" class="nav-btn"><i class="fas fa-user"></i> User</a>
+            <a href="/admin_login" class="nav-btn"><i class="fas fa-user-shield"></i> Admin</a>
+            <a href="/register" class="nav-btn"><i class="fas fa-user-plus"></i> Register</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Classification of Eye Cataract Disease in Humans Using Vision Transformer Architecture Model</h1>
+        <p>This project aims to detect cataracts in eye images using Deep learning.</p>
+        <p>Please login or register to use the prediction feature.</p>
+    </div>
+    <div class="container">
+        <h2>Cataract Identification Overview</h2>
+        <p>Cataract is one of the leading causes of visual impairment globally, characterized by clouding of the eye’s natural lens, which results in blurry or distorted vision. Early detection is crucial for timely treatment and preventing permanent vision loss.</p>
+        <p>In this project, we leverage cutting-edge Vision Transformer (ViT) architecture to automatically identify cataracts from eye images. By harnessing deep learning and attention mechanisms, our model learns to focus on critical regions of the eye, achieving high accuracy in classification.</p>
+        <p>This automated approach enhances diagnostic efficiency, supports ophthalmologists, and improves accessibility to early eye disease detection, especially in remote or underserved areas.</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navbar = document.getElementById('navbar');
+            const navLinks = document.querySelectorAll('.nav-btn');
+            const currentPath = window.location.pathname;
+            const textFlowContainer = document.getElementById('textFlowContainer');
+
+            // Active Link Highlight
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Navbar Scroll Effect
+            window.addEventListener('scroll', () => {
+                navbar.classList.toggle('scrolled', window.scrollY > 10);
+            });
+
+            // Particles.js Configuration
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 50 },
+                    color: { value: "#3498db" },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.5, random: true },
+                    size: { value: 8, random: true },
+                    line_linked: {
+                        enable: true,
+                        distance: 120,
+                        color: "#2ecc71",
+                        opacity: 0.6,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 3,
+                        direction: "none",
+                        out_mode: "bounce"
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "grab" },
+                        onclick: { enable: true, mode: "push" }
+                    },
+                    modes: {
+                        grab: { distance: 200, line_linked: { opacity: 0.5 } },
+                        push: { particles_nb: 4 }
+                    }
+                },
+                retina_detect: true
+            });
+
+            // Flowing Text Animation
+            function createFlowingText() {
+                const phrases = ["Detecting...", "Analyzing...", "Scanning...", "Processing..."];
+                const text = document.createElement('div');
+                text.classList.add('text-flow');
+                text.textContent = phrases[Math.floor(Math.random() * phrases.length)];
+                text.style.top = `${Math.random() * 80 + 10}vh`;
+                text.style.animationDelay = `${Math.random() * 5}s`;
+                textFlowContainer.appendChild(text);
+
+                setTimeout(() => {
+                    text.remove();
+                }, 8000); // Matches animation duration
+            }
+
+            setInterval(createFlowingText, 1000); // Create new flowing text every second
+        });
+    </script>
+</body>
+</html>

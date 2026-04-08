@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Cataract Detection Project</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f0f8ff url('https://images.unsplash.com/photo-1615240135436-2b8f8b8e490e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80') no-repeat center/cover;
+            color: #333;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, rgba(52, 152, 219, 0.2), transparent 50%),
+                        radial-gradient(circle at 70% 70%, rgba(46, 204, 113, 0.2), transparent 50%);
+            animation: eyePulse 8s infinite ease-in-out;
+            z-index: -1;
+        }
+
+        @keyframes eyePulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            padding: 1.5rem 3rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            transition: all 0.4s ease;
+        }
+
+        .navbar.scrolled {
+            background: linear-gradient(135deg, #2980b9, #27ae60);
+            transform: scale(1.01);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-title {
+            color: #fff;
+            font-size: 2rem;
+            font-weight: bold;
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            animation: glow 2s infinite alternate;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-title:hover {
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 0 0 5px #fff, 0 0 10px #3498db; }
+            100% { text-shadow: 0 0 10px #fff, 0 0 20px #2ecc71; }
+        }
+
+        /* Login Container */
+        .login-container {
+            margin-top: 120px;
+            padding: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            border-radius: 12px 12px 0 0;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            animation: textGlow 3s infinite alternate;
+        }
+
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 5px #3498db; }
+            100% { text-shadow: 0 0 15px #2ecc71; }
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #3498db;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #2ecc71;
+            box-shadow: 0 0 5px rgba(46, 204, 113, 0.5);
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            border-color: #3498db;
+            border-radius: 8px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #2ecc71;
+            border-color: #2ecc71;
+            transform: translateY(-2px);
+        }
+
+        /* Particles and Flowing Text */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .text-flow {
+            position: absolute;
+            font-size: 1.2rem;
+            color: #3498db;
+            opacity: 0.6;
+            pointer-events: none;
+            z-index: 0;
+            animation: flowText 8s linear infinite;
+        }
+
+        @keyframes flowText {
+            0% { transform: translateX(-100vw); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateX(100vw); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div id="textFlowContainer"></div>
+
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-title">Cataract Detection Project</a>
+        </div>
+    </nav>
+
+    <div class="container login-container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Admin Login
+                    </div>
+                    <div class="card-body">
+                        <form action="/admin_login" method="post">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navbar = document.getElementById('navbar');
+            const textFlowContainer = document.getElementById('textFlowContainer');
+
+            // Navbar Scroll Effect
+            window.addEventListener('scroll', () => {
+                navbar.classList.toggle('scrolled', window.scrollY > 10);
+            });
+
+            // Particles.js Configuration
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 50 },
+                    color: { value: "#3498db" },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.5, random: true },
+                    size: { value: 8, random: true },
+                    line_linked: {
+                        enable: true,
+                        distance: 120,
+                        color: "#2ecc71",
+                        opacity: 0.6,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 3,
+                        direction: "none",
+                        out_mode: "bounce"
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "grab" },
+                        onclick: { enable: true, mode: "push" }
+                    },
+                    modes: {
+                        grab: { distance: 200, line_linked: { opacity: 0.5 } },
+                        push: { particles_nb: 4 }
+                    }
+                },
+                retina_detect: true
+            });
+
+            // Flowing Text Animation
+            function createFlowingText() {
+                const phrases = ["Authenticating...", "Verifying...", "Securing...", "Logging in..."];
+                const text = document.createElement('div');
+                text.classList.add('text-flow');
+                text.textContent = phrases[Math.floor(Math.random() * phrases.length)];
+                text.style.top = `${Math.random() * 80 + 10}vh`;
+                text.style.animationDelay = `${Math.random() * 5}s`;
+                textFlowContainer.appendChild(text);
+
+                setTimeout(() => {
+                    text.remove();
+                }, 8000); // Matches animation duration
+            }
+
+            setInterval(createFlowingText, 1000); // Create new flowing text every second
+        });
+    </script>
+</body>
+</html>

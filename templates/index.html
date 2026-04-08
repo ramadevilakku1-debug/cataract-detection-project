@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cataract Detection Project</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700&family=Orbitron:wght@500&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background: #f0f8ff url('https://images.unsplash.com/photo-1615240135436-2b8f8b8e490e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80') no-repeat center/cover;
+            color: #333;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, rgba(52, 152, 219, 0.2), transparent 50%),
+                        radial-gradient(circle at 70% 70%, rgba(46, 204, 113, 0.2), transparent 50%);
+            animation: eyePulse 8s infinite ease-in-out;
+            z-index: -1;
+        }
+
+        @keyframes eyePulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+
+        /* Navbar (Header Replacement) */
+        .header {
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            padding: 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            transition: all 0.4s ease;
+            text-align: center;
+            animation: slideDown 1s ease-out;
+        }
+
+        .header.scrolled {
+            background: linear-gradient(135deg, #2980b9, #27ae60);
+            transform: scale(1.01);
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: #fff;
+            font-size: 2.5rem;
+            font-weight: bold;
+            animation: textGlow 3s infinite alternate;
+        }
+
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 5px #3498db; }
+            100% { text-shadow: 0 0 15px #2ecc71; }
+        }
+
+        .header p {
+            color: #fff;
+            font-size: 1.2rem;
+        }
+
+        .header a {
+            color: #fff;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        .header a:hover {
+            color: #e0f7fa;
+        }
+
+        /* Main Container */
+        .container {
+            margin-top: 150px;
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-custom {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .btn-custom {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .btn-custom:hover {
+            background-color: #2ecc71;
+            transform: scale(1.05);
+        }
+
+        .section-title {
+            margin-top: 2rem;
+            color: #2c3e50;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 3px;
+            background: #3498db;
+            bottom: 0;
+            left: 0;
+            animation: expand 2s infinite;
+        }
+
+        @keyframes expand {
+            0% { width: 50px; }
+            50% { width: 100px; }
+            100% { width: 50px; }
+        }
+
+        .list-group-item {
+            border: 1px solid #ddd;
+            background-color: #fff;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .list-group-item:hover {
+            background-color: #f0f8ff;
+            transform: translateX(5px);
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #3498db;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #2ecc71;
+            box-shadow: 0 0 8px rgba(46, 204, 113, 0.25);
+        }
+
+        .text-danger {
+            color: #e74c3c !important;
+        }
+
+        .text-success {
+            color: #2ecc71 !important;
+        }
+
+        .table {
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+        }
+
+        /* Particles and Flowing Text */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .text-flow {
+            position: absolute;
+            font-size: 1.2rem;
+            color: #3498db;
+            opacity: 0.6;
+            pointer-events: none;
+            z-index: 0;
+            animation: flowText 8s linear infinite;
+        }
+
+        @keyframes flowText {
+            0% { transform: translateX(-100vw); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateX(100vw); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div id="textFlowContainer"></div>
+
+    <div class="header" id="header">
+        <h1 class="display-4 fw-bold">Cataract Detection Project</h1>
+        {% if username %}
+        <p class="lead">Welcome, {{ username }}! <a href="/logout">Logout</a></p>
+        {% else %}
+        <p class="lead">This project aims to detect cataracts in eye images. Upload an image to detect cataract</p>
+        {% endif %}
+    </div>
+    <br></br>
+    <br></br>
+    <br></br>
+    <br></br>
+    <br></br>
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <form method="POST" enctype="multipart/form-data" class="mb-4 card-custom p-4">
+                    <div class="mb-3">
+                        <label for="file" class="form-label fw-semibold">Select an image</label>
+                        <input type="file" class="form-control" id="file" name="file" accept="image/*" required>
+                    </div>
+                    <button type="submit" class="btn btn-custom w-100 py-2 fs-5">Upload and Predict</button>
+                </form>
+
+                {% if prediction %}
+                <div class="card card-custom mb-4 p-4">
+                    <div class="card-body">
+                        <h3 class="card-title mb-3">Prediction:
+                            {% if prediction == 'Cataract' %}
+                            <span class="text-danger">{{ prediction }}</span>
+                            {% else %}
+                            <span class="text-success">{{ prediction }}</span>
+                            {% endif %}
+                        </h3>
+                        <div class="mb-3">
+                            <img src="data:image/png;base64,{{ uploaded_image }}" alt="Uploaded Image" class="img-fluid rounded">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title">
+                    <h2>Cataract Statistics</h2>
+                </div>
+                <div class="card card-custom mb-4 p-4">
+                    <div class="card-body">
+                        <table class="table">
+                            <tbody>
+                                {% for key, value in stats.items() %}
+                                <tr>
+                                    <th>{{ key }}</th>
+                                    <td>{{ value }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="text-center">
+                            <img src="data:image/png;base64,{{ pie_chart }}" alt="Cataract Stats Pie Chart" class="img-fluid rounded">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title">
+                    <h2>Cataract Remedies</h2>
+                </div>
+                <div class="card card-custom mb-4 p-4">
+                    <div class="card-body">
+                        <ul class="list-group">
+                            {% for remedy in remedies %}
+                            <li class="list-group-item">{{ remedy }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="section-title">
+                    <h2>Cataract Risks</h2>
+                </div>
+                <div class="card card-custom mb-4 p-4">
+                    <div class="card-body">
+                        <ul class="list-group">
+                            {% for risk in risks %}
+                            <li class="list-group-item">{{ risk }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="section-title">
+                    <h2>Cataract Symptoms</h2>
+                </div>
+                <div class="card card-custom mb-4 p-4">
+                    <div class="card-body">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Symptoms</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for symptom in symptoms %}
+                                <tr>
+                                    <td>{{ symptom }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const header = document.getElementById('header');
+            const textFlowContainer = document.getElementById('textFlowContainer');
+
+            // Header Scroll Effect
+            window.addEventListener('scroll', () => {
+                header.classList.toggle('scrolled', window.scrollY > 10);
+            });
+
+            // Particles.js Configuration
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 50 },
+                    color: { value: "#3498db" },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.5, random: true },
+                    size: { value: 8, random: true },
+                    line_linked: {
+                        enable: true,
+                        distance: 120,
+                        color: "#2ecc71",
+                        opacity: 0.6,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 3,
+                        direction: "none",
+                        out_mode: "bounce"
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "grab" },
+                        onclick: { enable: true, mode: "push" }
+                    },
+                    modes: {
+                        grab: { distance: 200, line_linked: { opacity: 0.5 } },
+                        push: { particles_nb: 4 }
+                    }
+                },
+                retina_detect: true
+            });
+
+            // Flowing Text Animation
+            function createFlowingText() {
+                const phrases = ["Detecting...", "Analyzing...", "Scanning...", "Processing..."];
+                const text = document.createElement('div');
+                text.classList.add('text-flow');
+                text.textContent = phrases[Math.floor(Math.random() * phrases.length)];
+                text.style.top = `${Math.random() * 80 + 10}vh`;
+                text.style.animationDelay = `${Math.random() * 5}s`;
+                textFlowContainer.appendChild(text);
+
+                setTimeout(() => {
+                    text.remove();
+                }, 8000); // Matches animation duration
+            }
+
+            setInterval(createFlowingText, 1000); // Create new flowing text every second
+        });
+    </script>
+</body>
+</html>

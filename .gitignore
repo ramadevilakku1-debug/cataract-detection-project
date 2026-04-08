@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+venv/
+env/
+
+# Database
+*.db
+
+# Model files (VERY IMPORTANT)
+*.h5
+*.pth
+*.pkl
+*.pt
+
+# Dataset (VERY VERY IMPORTANT)
+Dataset/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+
+# VS Code
+.vscode/
