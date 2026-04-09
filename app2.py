@@ -343,6 +343,27 @@ def index():
 
 
 
+from flask import jsonify
+
+############################################
+# MOBILE API
+############################################
+
+@app.route('/api/predict', methods=['POST'])
+def api_predict():
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part"}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+
+    try:
+        img = Image.open(file.stream)
+        result = predict(img)
+        return jsonify({"prediction": result})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/logout')
 def logout():
     session.pop('username', None)
