@@ -58,7 +58,7 @@ from PIL import Image
 import onnxruntime as ort
 
 # Load the ONNX model
-session = ort.InferenceSession('cataract_vit_model.onnx')
+session = ort.InferenceSession('cataract_model_standalone.onnx')
 
 classes = ['Immature', 'Mature', 'Normal']
 
